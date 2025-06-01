@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson App</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="app">
+    <button @click="toggleCart" :disabled="cart.length === 0">
+      {{ showCart ? 'Back to Lessons' : 'View Cart' }}
+    </button>
+
+    <div v-if="showCart">
+      <h2>Shopping Cart</h2>
+      <ul>
+        <li v-for="(item, index) in cart" :key="index">
+          {{ item.subject }} - {{ item.location }}
+          <button @click="removeFromCart(index)">Remove</button>
+        </li>
+      </ul>
+      <form @submit.prevent="checkout">
+        <input v-model="name" placeholder="Name" />
+        <input v-model="phone" placeholder="Phone" />
+        <button type="submit" :disabled="!validName || !validPhone">Checkout</button>
+      </form>
+      <p v-if="orderSubmitted">Order submitted successfully!</p>
+    </div>
+
+    <div v-else>
+      <label for="sort">Sort by:</label>
+      <select id="sort" v-model="sortKey">
+        <option value="subject">Subject</option>
+        <option value="location">Location</option>
+        <option value="price">Price</option>
+        <option value="spaces">Spaces</option>
+      </select>
+      <button @click="toggleSortOrder">
+        Sort: {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
+      </button>
+
+      <ul>
+        <li v-for="lesson in sortedLessons" :key="lesson.id">
+          <i class="fas fa-book"></i> {{ lesson.subject }} - {{ lesson.location }} - ${{ lesson.price }} - Spaces: {{ lesson.spaces }}
+          <button 
+            @click="addToCart(lesson)" 
+            :disabled="lesson.spaces === 0"
+          >
+            Add to Cart
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
